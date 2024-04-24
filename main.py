@@ -27,7 +27,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     config_path = args.config
+    print("Loading Config...")
     config = OmegaConf.load(config_path)
+    print("Config Loaded")
     trainer = Trainer(config)
 
     if not args.visualize:

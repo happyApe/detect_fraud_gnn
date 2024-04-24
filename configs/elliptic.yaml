@@ -1,8 +1,8 @@
 name: elliptic
 dataset:
-  features_path: "data/elliptic/elliptic_txs_features.csv"
-  edges_path: "data/elliptic/elliptic_txs_edgelist.csv"
-  classes: "data/elliptic/elliptic_txs_classes.csv"
+  features_path: "data/elliptic_bitcoin_dataset/elliptic_txs_features.csv"
+  edges_path: "data/elliptic_bitcoin_dataset/elliptic_txs_edgelist.csv"
+  classes: "data/elliptic_bitcoin_dataset/elliptic_txs_classes.csv"
 
 model:
   num_heads: 2
