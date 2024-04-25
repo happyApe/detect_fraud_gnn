@@ -5,3 +5,4 @@ torch
 torch_geometric
 scikit-learn
 networkx
+omegaconf

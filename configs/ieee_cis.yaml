@@ -1,0 +1,29 @@
+name: ieee_cis
+dataset:
+  train_transaction_path: "data/ieee_cis/train_transaction.csv"
+  train_identity_path: "data/ieee_cis/train_identity.csv"
+  test_transaction_path: "data/ieee_cis/test_transaction.csv"
+  test_identity_path: "data/ieee_cis/test_identity.csv"
+
+model:
+  num_heads: 2
+  input_dim: ???
+  hidden_dim: 128
+  output_dim: 1
+  dropout: 0.5
+
+train:
+  dataset: elliptic
+  model: gat
+  num_epochs: 100
+  device: cuda
+  lr: 0.01
+  weight_decay: 1e-5
+  print_freq: 10
+  save_dir: weights/
+  save_freq: 100
+
+visualize:
+  step : 30
+  weights_path: "weights/ieee_cis_gat.pt"
+

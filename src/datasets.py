@@ -116,3 +116,70 @@ class EllipticDataset:
         labels = self.merged_df["class"].values
         labels_tensor = torch.tensor(labels, dtype=torch.double)
         return labels_tensor
+
+
+class FraudDataset:
+    def __init__(
+        self,
+        config,
+    ):
+        # Load training data
+        self.train_transaction_df = pd.read_csv(config.train_transaction_path)
+        self.train_identity_df = pd.read_csv(config.train_identity_path)
+        self.train_df = pd.merge(
+            self.train_transaction_df,
+            self.train_identity_df,
+            on="TransactionID",
+            how="left",
+        )
+
+        # Load test data
+        self.test_transaction_df = pd.read_csv(config.test_transaction_path)
+        self.test_identity_df = pd.read_csv(config.test_identity_path)
+        self.test_df = pd.merge(
+            self.test_transaction_df,
+            self.test_identity_df,
+            on="TransactionID",
+            how="left",
+        )
+
+        # Encode categorical variables
+        self._encode_categoricals()
+
+        # Create tensors for PyG data object
+        self.features = self._node_features(self.train_df)
+        self.labels = self._labels(self.train_df)
+        self.test_features = self._node_features(self.test_df)
+
+        self.edge_index = (
+            self._edge_index()
+        )  # Assuming placeholder edges; real edges need proper context
+
+    def _encode_categoricals(self):
+        # Combine train and test to ensure consistent encoding
+        combined = pd.concat([self.train_df, self.test_df])
+        categoricals = combined.select_dtypes(include=["object"]).columns.tolist()
+        combined_encoded = pd.get_dummies(combined, columns=categoricals)
+
+        # Split combined back into train and test
+        self.train_df = combined_encoded.iloc[: len(self.train_df)]
+        self.test_df = combined_encoded.iloc[len(self.train_df) :]
+
+    def _node_features(self, df):
+        # Drop target and non-feature columns, then convert to tensor
+        features = df.drop(["isFraud", "TransactionID"], axis=1)
+        return torch.tensor(features.values, dtype=torch.float)
+
+    def _labels(self, df):
+        # Convert labels to tensor
+        return torch.tensor(df["isFraud"].values, dtype=torch.long)
+
+    def _edge_index(self):
+        # Fake edge index for demonstration; real scenario requires actual relationship definition
+        edge_index = torch.tensor([[0, 1, 2], [1, 2, 0]], dtype=torch.long)
+        return edge_index
+
+    def pyg_dataset(self):
+        # Create PyG dataset object
+        dataset = Data(x=self.features, edge_index=self.edge_index, y=self.labels)
+        return dataset
