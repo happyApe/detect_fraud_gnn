@@ -181,10 +181,57 @@ class FraudDataset:
         # Convert labels to tensor
         return torch.tensor(df["isFraud"].values, dtype=torch.long)
 
+    def _encode_nodes(self):
+        # Assuming 'TransactionID' is the primary key for transactions
+        # All other ID columns are considered as separate nodes
+        id_cols = [
+            "card1",
+            "card2",
+            "card3",
+            "card4",
+            "card5",
+            "card6",
+            "ProductCD",
+            "addr1",
+            "addr2",
+            "P_emaildomain",
+            "R_emaildomain",
+        ]
+        node_dict = {}
+        index = 0
+
+        # Assign an index to each unique transaction
+        self.train_df["node_index"] = range(len(self.train_df))
+        node_dict["Transaction"] = dict(
+            zip(self.train_df["TransactionID"], self.train_df["node_index"])
+        )
+
+        # Assign indices to other identifiers
+        for col in id_cols:
+            unique_values = pd.unique(self.train_df[col].dropna())
+            node_dict[col] = {value: i + index for i, value in enumerate(unique_values)}
+            index += len(unique_values)
+
+        return node_dict
+
     def _edge_index(self):
-        # Fake edge index for demonstration; real scenario requires actual relationship definition
-        edge_index = torch.tensor([[0, 1, 2], [1, 2, 0]], dtype=torch.long)
-        return edge_index
+        node_dict = self._encode_nodes()
+        edge_index = []
+
+        # Iterate over rows to construct edges
+        for _, row in self.train_df.iterrows():
+            transaction_index = row["node_index"]
+            # Create edges between transaction node and all other identity nodes
+            for col in node_dict.keys():
+                if col != "Transaction" and pd.notna(row[col]):
+                    edge_index.append([transaction_index, node_dict[col][row[col]]])
+                    edge_index.append(
+                        [node_dict[col][row[col]], transaction_index]
+                    )  # Adding reverse edge as well
+
+        # Convert to tensor for PyTorch Geometric
+        edge_index_tensor = torch.tensor(edge_index, dtype=torch.long).t().contiguous()
+        return edge_index_tensor
 
     def pyg_dataset(self):
         # Create PyG dataset object
