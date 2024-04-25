@@ -4,6 +4,7 @@ dataset:
   train_identity_path: "data/ieee_cis/train_identity.csv"
   test_transaction_path: "data/ieee_cis/test_transaction.csv"
   test_identity_path: "data/ieee_cis/test_identity.csv"
+  chunksize : 100000
 
 model:
   num_heads: 2

@@ -124,23 +124,11 @@ class FraudDataset:
         config,
     ):
         # Load training data
-        self.train_transaction_df = pd.read_csv(config.train_transaction_path)
-        self.train_identity_df = pd.read_csv(config.train_identity_path)
-        self.train_df = pd.merge(
-            self.train_transaction_df,
-            self.train_identity_df,
-            on="TransactionID",
-            how="left",
+        self.train_df = self.load_and_merge_data(
+            config.train_transaction_path, config.train_identity_path, config.chunksize
         )
-
-        # Load test data
-        self.test_transaction_df = pd.read_csv(config.test_transaction_path)
-        self.test_identity_df = pd.read_csv(config.test_identity_path)
-        self.test_df = pd.merge(
-            self.test_transaction_df,
-            self.test_identity_df,
-            on="TransactionID",
-            how="left",
+        self.test_df = self.load_and_merge_data(
+            config.test_transaction_path, config.test_identity_path, config.chunksize
         )
 
         # Encode categorical variables
@@ -154,6 +142,22 @@ class FraudDataset:
         self.edge_index = (
             self._edge_index()
         )  # Assuming placeholder edges; real edges need proper context
+
+    def load_and_merge_data(self, transaction_path, identity_path, chunksize=None):
+        if chunksize is None:
+            # Load data normally
+            transaction_df = pd.read_csv(transaction_path)
+            identity_df = pd.read_csv(identity_path)
+        else:
+            # Load data in chunks
+            transaction_df = pd.concat(
+                pd.read_csv(transaction_path, chunksize=chunksize)
+            )
+            identity_df = pd.concat(pd.read_csv(identity_path, chunksize=chunksize))
+
+        # Merge datasets
+        df = pd.merge(transaction_df, identity_df, on="TransactionID", how="left")
+        return df
 
     def _encode_categoricals(self):
         # Combine train and test to ensure consistent encoding
