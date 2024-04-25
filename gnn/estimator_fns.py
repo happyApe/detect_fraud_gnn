@@ -7,7 +7,7 @@ import os
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--training-dir", type=str, default="./data/ieee_cis/")
+    parser.add_argument("--training-dir", type=str, default="./data")
 
     dt = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     parser.add_argument("--model-dir", type=str, default="./model/" + dt)
@@ -64,4 +64,3 @@ def get_logger(name):
     logging.basicConfig(format=log_format, level=logging.INFO)
     logger.setLevel(logging.INFO)
     return logger
-
