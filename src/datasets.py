@@ -144,6 +144,7 @@ class FraudDataset:
         )  # Assuming placeholder edges; real edges need proper context
 
     def load_and_merge_data(self, transaction_path, identity_path, chunksize=None):
+        print(f"Loading from {transaction_path} with chunksize : {chunksize}")
         if chunksize is None:
             # Load data normally
             transaction_df = pd.read_csv(transaction_path)
@@ -156,7 +157,9 @@ class FraudDataset:
             identity_df = pd.concat(pd.read_csv(identity_path, chunksize=chunksize))
 
         # Merge datasets
+        print(f"Loading Done, Merging..")
         df = pd.merge(transaction_df, identity_df, on="TransactionID", how="left")
+        print("Merging Done")
         return df
 
     def _encode_categoricals(self):
