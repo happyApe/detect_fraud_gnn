@@ -14,12 +14,12 @@ from sklearn.metrics import (
 )
 from torch.utils.tensorboard import SummaryWriter
 
-from .datasets import EllipticDataset
+from .datasets import EllipticDataset, FraudDataset
 from .models import GAT, GCN, GIN
 
 models_map = {"gcn": GCN, "gat": GAT, "gin": GIN}
 
-datasets_map = {"elliptic": EllipticDataset}
+datasets_map = {"elliptic": EllipticDataset, "ieee_cis": FraudDataset}
 
 
 class Trainer:
