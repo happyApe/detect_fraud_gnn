@@ -175,7 +175,7 @@ class FraudDataset:
     def _node_features(self, df):
         # Drop target and non-feature columns, then convert to tensor
         features = df.drop(["isFraud", "TransactionID"], axis=1)
-        return torch.tensor(features.values, dtype=torch.float)
+        return torch.tensor(features.values, dtype=torch.float32)
 
     def _labels(self, df):
         # Convert labels to tensor
