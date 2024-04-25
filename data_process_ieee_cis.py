@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-transaction_df = pd.read_csv("data/ieee-data/train_transaction.csv")
-identity_df = pd.read_csv("data/ieee-data/train_identity.csv")
-test_transaction = pd.read_csv("data/ieee-data/test_transaction.csv")
-test_identity = pd.read_csv("data/ieee-data/test_identity.csv")
+transaction_df = pd.read_csv("data/ieee_cis/train_transaction.csv")
+identity_df = pd.read_csv("data/ieee_cis/train_identity.csv")
+test_transaction = pd.read_csv("data/ieee_cis/test_transaction.csv")
+test_identity = pd.read_csv("data/ieee_cis/test_identity.csv")
 
 id_cols = [
     "card1",
