@@ -1,5 +1,10 @@
+import os
+
 import numpy as np
 import pandas as pd
+
+if not os.path.exists("data/ieee_cis_clean"):
+    os.makedirs("data/iee_cis_clean")
 
 transaction_df = pd.read_csv("data/ieee_cis/train_transaction.csv")
 identity_df = pd.read_csv("data/ieee_cis/train_identity.csv")
@@ -46,7 +51,7 @@ print(
 
 #  Save test IDs into the `test.csv` file
 
-with open("data/test.csv", "w") as f:
+with open("data/ieee_cis_clean/test.csv", "w") as f:
     f.writelines(map(lambda x: str(x) + "\n", test_ids))
 
 # Based on the standard we talked about before, define non-feature-columns and feature-columns for creating graph.
@@ -66,11 +71,13 @@ features["TransactionAmt"] = features["TransactionAmt"].apply(np.log10)
 print(list(features.columns))
 
 # Save the features into `features.csv` for future training.
-features.to_csv("data/features.csv", index=False, header=False)
+features.to_csv("data/ieee_cis_clean/features.csv", index=False, header=False)
 
 # Save the IDs and label into the `tags.csv`.
 
-transaction_df[["TransactionID", "isFraud"]].to_csv("data/tags.csv", index=False)
+transaction_df[["TransactionID", "isFraud"]].to_csv(
+    "data/ieee_cis_clean/tags.csv", index=False
+)
 
 # Select the columns that define the edges.
 
@@ -88,7 +95,9 @@ edges = {}
 for etype in edge_types:
     edgelist = full_identity_df[["TransactionID", etype]].dropna()
     edgelist.to_csv(
-        "data/relation_{}_edgelist.csv".format(etype), index=False, header=True
+        "data/ieee_cis_clean/relation_{}_edgelist.csv".format(etype),
+        index=False,
+        header=True,
     )
     edges[etype] = edgelist
 
@@ -98,7 +107,7 @@ print(edges)
 
 import glob
 
-file_list = glob.glob("./data/*edgelist.csv")
+file_list = glob.glob("./data/ieee_cis_clean/*edgelist.csv")
 
 edges = ",".join(
     map(lambda x: x.split("/")[-1], [file for file in file_list if "relation" in file])
@@ -106,7 +115,7 @@ edges = ",".join(
 
 edges_full = ""
 for etype in edge_types:
-    edges_full += ",data/relation_{}_edgelist.csv".format(etype)
+    edges_full += ",data/ieee_cis_clean/relation_{}_edgelist.csv".format(etype)
 
 
 print(edges)
