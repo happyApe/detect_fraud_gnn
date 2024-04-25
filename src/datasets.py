@@ -130,6 +130,7 @@ class FraudDataset:
         self.test_df = self.load_and_merge_data(
             config.test_transaction_path, config.test_identity_path, config.chunksize
         )
+        print("Data loaded")
 
         # Encode categorical variables
         self._encode_categoricals()
@@ -138,10 +139,9 @@ class FraudDataset:
         self.features = self._node_features(self.train_df)
         self.labels = self._labels(self.train_df)
         self.test_features = self._node_features(self.test_df)
+        print("Tensors created")
 
-        self.edge_index = (
-            self._edge_index()
-        )  # Assuming placeholder edges; real edges need proper context
+        self.edge_index = self._edge_index()
 
     def load_and_merge_data(self, transaction_path, identity_path, chunksize=None):
         print(f"Loading from {transaction_path} with chunksize : {chunksize}")
@@ -235,5 +235,6 @@ class FraudDataset:
 
     def pyg_dataset(self):
         # Create PyG dataset object
+        print("Creating object for pyg")
         dataset = Data(x=self.features, edge_index=self.edge_index, y=self.labels)
         return dataset
