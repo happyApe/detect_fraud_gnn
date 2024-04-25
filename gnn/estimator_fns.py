@@ -7,7 +7,7 @@ import os
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--training-dir", type=str, default="./data")
+    parser.add_argument("--training-dir", type=str, default="./data/ieee_cis_clean/")
 
     dt = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
     parser.add_argument("--model-dir", type=str, default="./model/" + dt)
