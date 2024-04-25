@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 if not os.path.exists("data/ieee_cis_clean"):
-    os.makedirs("data/iee_cis_clean")
+    os.makedirs("data/ieee_cis_clean")
 
 transaction_df = pd.read_csv("data/ieee_cis/train_transaction.csv")
 identity_df = pd.read_csv("data/ieee_cis/train_identity.csv")
